@@ -287,6 +287,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
+
 // ===========================================
 // 4. OPTIONAL TASK: REAL-TIME VALIDATION
 // ===========================================
@@ -2447,6 +2448,35 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
       
+      // // Submit button animation
+      // const submitBtn = contactForm.querySelector('button[type="submit"]');
+      // if (submitBtn) {
+      //   submitBtn.addEventListener('click', function() {
+      //     if (!contactForm.checkValidity()) return;
+          
+      //     // Loading animation
+      //     const originalText = this.innerHTML;
+      //     this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+      //     this.disabled = true;
+          
+      //     // Simulate sending (replace with actual AJAX)
+      //     setTimeout(() => {
+      //       this.innerHTML = '<i class="fas fa-check"></i> Sent!';
+      //       this.style.background = '#28a745';
+            
+      //       setTimeout(() => {
+      //         this.innerHTML = originalText;
+      //         this.disabled = false;
+      //         this.style.background = '';
+      //       }, 2000);
+      //     }, 1500);
+      //   });
+      // }
+      
+      window.addEventListener('resize', adjustFormLayout);
+      adjustFormLayout();
+    }
+  }
   
   // 6. RESPONSIVE MEMORY GAME
   function enhanceResponsiveMemoryGame() {
@@ -3019,4 +3049,155 @@ document.addEventListener('DOMContentLoaded', function() {
   document.head.appendChild(deviceStyles);
 });
 
+// ===========================================
+// 4. PROFILE IMAGE HOVER EFFECTS
+// ===========================================
 
+document.addEventListener('DOMContentLoaded', function() {
+  console.log("Setting up profile image hover effects...");
+  
+  // Find ONLY the specific profile images you want to target
+  const profileImages = document.querySelectorAll('img');
+  
+  profileImages.forEach(img => {
+    // Check if it's one of the specific profile images
+    const src = img.src.toLowerCase();
+    const alt = img.alt.toLowerCase();
+    const className = img.className.toLowerCase();
+    
+    // Target ONLY fairooz-profile and fairooz-square images
+    // Avoid portfolio images that already have hover effects
+    const isTargetImage = (
+      src.includes('fairooz-profile') || 
+      src.includes('fairooz-square') ||
+      src.includes('fairooz') && (src.includes('profile') || src.includes('square')) ||
+      alt.includes('fairooz') && (alt.includes('profile') || alt.includes('square'))
+    );
+    
+    // Make sure it's not a portfolio image (assuming portfolio images have specific classes)
+    const isPortfolioImage = (
+      img.classList.contains('portfolio-img') ||
+      img.classList.contains('project-img') ||
+      img.parentElement.classList.contains('portfolio-item') ||
+      img.parentElement.classList.contains('project-item') ||
+      src.includes('portfolio') ||
+      src.includes('project')
+    );
+    
+    if (isTargetImage && !isPortfolioImage) {
+      console.log("Found specific profile image to add effects to:", img.src);
+      
+      // Check if image already has hover effects applied (has profile-wrapper parent)
+      if (img.closest('.profile-wrapper')) {
+        console.log("Image already has hover effects, skipping...");
+        return;
+      }
+      
+      // Add hover effects
+      img.style.transition = 'all 0.3s ease';
+      img.style.cursor = 'pointer';
+      
+      // Create wrapper
+      const wrapper = document.createElement('div');
+      wrapper.className = 'fairooz-profile-wrapper';
+      
+      // Apply consistent rounded square corners
+      wrapper.style.cssText = `
+        position: relative;
+        display: inline-block;
+        overflow: hidden;
+        border-radius: 15px;
+      `;
+      
+      // Apply same border-radius to image
+      img.style.borderRadius = '15px';
+      
+      // Wrap the image
+      img.parentNode.insertBefore(wrapper, img);
+      wrapper.appendChild(img);
+      
+      // Add hover effect
+      wrapper.addEventListener('mouseenter', function() {
+        img.style.transform = 'scale(1.1)';
+        img.style.filter = 'brightness(1.1)';
+        this.style.boxShadow = '0 0 25px rgba(102, 126, 234, 0.4)';
+        this.style.border = '3px solid rgba(102, 126, 234, 0.2)';
+      });
+      
+      wrapper.addEventListener('mouseleave', function() {
+        img.style.transform = 'scale(1)';
+        img.style.filter = 'brightness(1)';
+        this.style.boxShadow = '';
+        this.style.border = '';
+      });
+      
+      // Click to view larger
+      wrapper.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation(); // Prevent event bubbling
+        
+        // Create modal
+        const modal = document.createElement('div');
+        modal.className = 'profile-modal';
+        modal.style.cssText = `
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          background: rgba(0,0,0,0.9);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 9999;
+          cursor: pointer;
+        `;
+        
+        const modalImg = document.createElement('img');
+        modalImg.src = img.src;
+        modalImg.alt = img.alt;
+        modalImg.style.cssText = `
+          max-width: 90%;
+          max-height: 90%;
+          border-radius: 15px;
+          box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        `;
+        
+        modal.appendChild(modalImg);
+        document.body.appendChild(modal);
+        
+        // Close modal on click
+        modal.addEventListener('click', function() {
+          document.body.removeChild(modal);
+        });
+      });
+    }
+  });
+  
+  // Add CSS styles only for these specific images
+  const profileStyles = document.createElement('style');
+  profileStyles.textContent = `
+    /* Styles only for fairooz profile images */
+    .fairooz-profile-wrapper {
+      transition: all 0.3s ease !important;
+    }
+    
+    .fairooz-profile-wrapper:hover {
+      transform: translateY(-5px) !important;
+    }
+    
+    @media (max-width: 768px) {
+      .fairooz-profile-wrapper:hover {
+        transform: scale(1.05) !important;
+      }
+    }
+    
+    /* Ensure consistent rounded square corners */
+    .fairooz-profile-wrapper,
+    .fairooz-profile-wrapper img {
+      border-radius: 15px !important;
+    }
+  `;
+  
+  document.head.appendChild(profileStyles);
+});

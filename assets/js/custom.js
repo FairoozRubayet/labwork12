@@ -2447,35 +2447,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
       });
       
-      // Submit button animation
-      const submitBtn = contactForm.querySelector('button[type="submit"]');
-      if (submitBtn) {
-        submitBtn.addEventListener('click', function() {
-          if (!contactForm.checkValidity()) return;
-          
-          // Loading animation
-          const originalText = this.innerHTML;
-          this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-          this.disabled = true;
-          
-          // Simulate sending (replace with actual AJAX)
-          setTimeout(() => {
-            this.innerHTML = '<i class="fas fa-check"></i> Sent!';
-            this.style.background = '#28a745';
-            
-            setTimeout(() => {
-              this.innerHTML = originalText;
-              this.disabled = false;
-              this.style.background = '';
-            }, 2000);
-          }, 1500);
-        });
-      }
-      
-      window.addEventListener('resize', adjustFormLayout);
-      adjustFormLayout();
-    }
-  }
   
   // 6. RESPONSIVE MEMORY GAME
   function enhanceResponsiveMemoryGame() {
@@ -3047,4 +3018,5 @@ document.addEventListener('DOMContentLoaded', function() {
   
   document.head.appendChild(deviceStyles);
 });
+
 
